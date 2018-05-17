@@ -3,6 +3,19 @@ import csv
 import sqlite3
 
 window = Tk()
+mainFrame = Frame(window)
+mainFrame.grid(row=0, column=0, sticky="nsew")
+
+def initializeResultsFrame():
+    resultFrame = Frame(window)
+    resultFrame.grid(row=0, column=0, sticky="nsew")
+    topButton = Button(resultFrame, text="CLOSE", command=lambda: closeResultsFrame(resultFrame))
+    topButton.grid(column=0, row=0)
+    return resultFrame
+
+def closeResultsFrame(resultFrame):
+    resultFrame.destroy()
+
 
 window.title("Wine Club Data Analysis")
 window.geometry("500x500")
@@ -86,22 +99,22 @@ def loadMembersAndStoreData(members_path, store_path):
 
     showQueryButtons
 
-
 def showQueryButtons():
     query1_button = Button(window, text="Query 1", command=executeQuery1)
     query1_button.grid(column=0, row=0)
-
-def displayResultTable(rows,start_row):
+top = Toplevel()
+def displayResultTable(rows,start_row,resultsFrame):
+    resultsFrame.tkraise(mainFrame)
     row_counter=start_row
     col_counter=0
     for row in rows:
         print(row)
         for col in row:
-            curr_ele =Label(window, text=col)
+            curr_ele =Label(resultsFrame, text=col)
             curr_ele.grid(column=col_counter, row=row_counter)
  #           curr_ele.pack()
             col_counter = col_counter + 1
-            col_divider = Label(window, text="|")
+            col_divider = Label(resultsFrame, text="|")
             col_divider.grid(column=col_counter, row=row_counter)
   #          col_divider.pack()
             col_counter = col_counter + 1
@@ -118,9 +131,9 @@ def executeQuery1():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-
-    displayResultTable(headerRow,4)
-    displayResultTable(rows,5)
+    resultsFrame = initializeResultsFrame()
+    displayResultTable(headerRow,4,resultsFrame)
+    displayResultTable(rows,5,resultsFrame)
     conn.close()
 
 def executeQuery2():
@@ -192,26 +205,26 @@ def executeQuery5():
 
 
 def importData():
-    members_path_lbl = Label(window, text = "Enter the path for members file")
-    members_path_entry = Entry(window)
-    stores_path_lbl = Label(window, text = "Enter the path for stores file")
-    stores_path_entry= Entry(window)
+    members_path_lbl = Label(mainFrame, text = "Enter the path for members file")
+    members_path_entry = Entry(mainFrame)
+    stores_path_lbl = Label(mainFrame, text = "Enter the path for stores file")
+    stores_path_entry= Entry(mainFrame)
 
     members_path_lbl.grid(column =0, row = 0)
     members_path_entry.grid(column = 0, row =1)
     stores_path_lbl.grid(column =0, row =2 )
     stores_path_entry.grid(column =0, row =3)
 
-    submitpath_button = Button(window, text="Submit", command = lambda: loadMembersAndStoreData(members_path_entry.get(), stores_path_entry.get()))
+    submitpath_button = Button(mainFrame, text="Submit", command = lambda: loadMembersAndStoreData(members_path_entry.get(), stores_path_entry.get()))
     submitpath_button.grid(column = 0, row = 4)
 
 
-importData_button = Button(window, text="Import Data", command = importData)
-executeQuery1_button = Button(window, text = "Execute Query1", command=executeQuery1 )
-executeQuery2_button = Button(window, text = "Execute Query2", command=executeQuery2 )
-executeQuery3_button = Button(window, text = "Execute Query3", command=executeQuery3 )
-executeQuery4_button = Button(window, text = "Execute Query4", command=executeQuery4 )
-executeQuery5_button = Button(window, text = "Execute Query5", command=executeQuery5 )
+importData_button = Button(mainFrame, text="Import Data", command = importData)
+executeQuery1_button = Button(mainFrame, text = "Execute Query1", command=executeQuery1 )
+executeQuery2_button = Button(mainFrame, text = "Execute Query2", command=executeQuery2 )
+executeQuery3_button = Button(mainFrame, text = "Execute Query3", command=executeQuery3 )
+executeQuery4_button = Button(mainFrame, text = "Execute Query4", command=executeQuery4 )
+executeQuery5_button = Button(mainFrame, text = "Execute Query5", command=executeQuery5 )
 
 
 importData_button.grid(column = 0, row =0)
