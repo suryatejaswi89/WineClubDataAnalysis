@@ -16,11 +16,10 @@ def initializeResultsFrame():
 def closeResultsFrame(resultFrame):
     resultFrame.destroy()
 
-
 window.title("Wine Club Data Analysis")
 window.geometry("500x500")
 
-def loadMembersAndStoreData(members_path, store_path):
+def loadMembersAndStoreData(members_path, store_path, frame):
     conn = sqlite3.connect('members.db')
     c = conn.cursor()
 
@@ -97,12 +96,13 @@ def loadMembersAndStoreData(members_path, store_path):
     # Just be sure any changes have been committed or they will be lost.
     conn.close()
 
-    showQueryButtons
+    import_complete = Label(frame, text="Member and store data is successfully imported, please close to return to main menu")
+    import_complete.grid(column=0, row=5)
 
 def showQueryButtons():
     query1_button = Button(window, text="Query 1", command=executeQuery1)
     query1_button.grid(column=0, row=0)
-top = Toplevel()
+
 def displayResultTable(rows,start_row,resultsFrame):
     resultsFrame.tkraise(mainFrame)
     row_counter=start_row
@@ -167,7 +167,6 @@ def executeQuery3():
     conn.close()
 
 
-
 def executeQuery4():
     conn = sqlite3.connect('members.db')
     c = conn.cursor()
@@ -204,22 +203,29 @@ def executeQuery5():
     conn.close()
 
 
-def importData():
-    members_path_lbl = Label(mainFrame, text = "Enter the path for members file")
-    members_path_entry = Entry(mainFrame)
-    stores_path_lbl = Label(mainFrame, text = "Enter the path for stores file")
-    stores_path_entry= Entry(mainFrame)
+def importData(frame):
+    frame.tkraise(mainFrame)
+    members_path_lbl = Label(frame, text = "Enter the path for members file")
+    members_path_entry = Entry(frame)
+    stores_path_lbl = Label(frame, text = "Enter the path for stores file")
+    stores_path_entry= Entry(frame)
 
     members_path_lbl.grid(column =0, row = 0)
     members_path_entry.grid(column = 0, row =1)
     stores_path_lbl.grid(column =0, row =2 )
     stores_path_entry.grid(column =0, row =3)
 
-    submitpath_button = Button(mainFrame, text="Submit", command = lambda: loadMembersAndStoreData(members_path_entry.get(), stores_path_entry.get()))
+    submitpath_button = Button(frame, text="Submit", command = lambda: loadMembersAndStoreData(members_path_entry.get(), stores_path_entry.get(), frame))
     submitpath_button.grid(column = 0, row = 4)
 
+    close_button = Button(frame, text="close", command=lambda: closeResultsFrame(frame))
+    close_button.grid(column=4, row=4)
 
-importData_button = Button(mainFrame, text="Import Data", command = importData)
+def showDataImportForm():
+    dataImportFrame = initializeResultsFrame()
+    importData(dataImportFrame)
+
+importData_button = Button(mainFrame, text="Import Data", command = showDataImportForm)
 executeQuery1_button = Button(mainFrame, text = "Execute Query1", command=executeQuery1 )
 executeQuery2_button = Button(mainFrame, text = "Execute Query2", command=executeQuery2 )
 executeQuery3_button = Button(mainFrame, text = "Execute Query3", command=executeQuery3 )
