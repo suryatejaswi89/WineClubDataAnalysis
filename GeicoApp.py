@@ -6,18 +6,21 @@ window = Tk()
 mainFrame = Frame(window)
 mainFrame.grid(row=0, column=0, sticky="nsew")
 
-def initializeFrame():
+def initializeFrame(title):
     resultFrame = Frame(window)
     resultFrame.grid(row=0, column=0, sticky="nsew")
     topButton = Button(resultFrame, text="CLOSE", command=lambda: closeResultsFrame(resultFrame))
     topButton.grid(column=0, row=0)
+    frame_title = Label(resultFrame, text=title)
+    frame_title.grid(column=1, row=0, columnspan=10)
     return resultFrame
 
 def closeResultsFrame(resultFrame):
     resultFrame.destroy()
 
 window.title("Wine Club Data Analysis")
-window.geometry("500x500")
+window.geometry("{0}x{1}+0+0".format(
+    window.winfo_screenwidth()-3, window.winfo_screenheight()-3))
 
 def loadMembersAndStoreData(members_path, store_path, frame):
     conn = sqlite3.connect('members.db')
@@ -96,8 +99,8 @@ def loadMembersAndStoreData(members_path, store_path, frame):
     # Just be sure any changes have been committed or they will be lost.
     conn.close()
 
-    import_complete = Label(frame, text="Member and store data is successfully imported, please close to return to main menu")
-    import_complete.grid(column=0, row=5)
+    import_complete = Label(frame, text="Success!! click on close for main menu!")
+    import_complete.grid(column=1, row=8)
 
 def showQueryButtons():
     query1_button = Button(window, text="Query 1", command=executeQuery1)
@@ -121,8 +124,8 @@ def displayResultTable(rows,start_row,resultsFrame):
         col_counter = 0
         row_counter = row_counter + 1
 
-def createResultsFrame(header,rows):
-    resultsFrame = initializeFrame()
+def createResultsFrame(header,rows, title):
+    resultsFrame = initializeFrame(title)
     displayResultTable(header,4,resultsFrame)
     displayResultTable(rows,5,resultsFrame)
 
@@ -136,7 +139,8 @@ def executeQuery1():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    createResultsFrame(headerRow,rows)
+    queryTitle="List of alphabetized member names with all available data"
+    createResultsFrame(headerRow,rows,queryTitle)
     conn.close()
 
 def executeQuery2():
@@ -150,7 +154,8 @@ def executeQuery2():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    createResultsFrame(headerRow,rows)
+    queryTitle="List all members with zip code 22101 who have paid dues during January"
+    createResultsFrame(headerRow,rows,queryTitle)
     conn.close()
 
 def executeQuery3():
@@ -164,7 +169,8 @@ def executeQuery3():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    createResultsFrame(headerRow,rows)
+    queryTitle="List all members who have joined since 1999-07-01 and live in VA."
+    createResultsFrame(headerRow,rows,queryTitle)
     conn.close()
 
 
@@ -180,7 +186,8 @@ def executeQuery4():
     headerRow = [['LastName','FirstName','StoreName','Location']]
     c.execute(query1)
     rows = c.fetchall()
-    createResultsFrame(headerRow,rows)
+    queryTitle="List the names of all members and the names of their favorite store and its location"
+    createResultsFrame(headerRow,rows,queryTitle)
     conn.close()
 
 
@@ -198,29 +205,27 @@ def executeQuery5():
     headerRow = [['LastName','FirstName']]
     c.execute(query1)
     rows = c.fetchall()
-    createResultsFrame(headerRow,rows)
+    queryTitle="List the names of  all members whose favorite store is Total Wine"
+    createResultsFrame(headerRow,rows,queryTitle)
     conn.close()
 
 def importData(frame):
     frame.tkraise(mainFrame)
-    members_path_lbl = Label(frame, text = "Enter the path for members file")
+    members_path_lbl = Label(frame, text = "Member data: ")
     members_path_entry = Entry(frame)
-    stores_path_lbl = Label(frame, text = "Enter the path for stores file")
+    stores_path_lbl = Label(frame, text = "Store data: ")
     stores_path_entry= Entry(frame)
 
-    members_path_lbl.grid(column =0, row = 0)
-    members_path_entry.grid(column = 0, row =1)
-    stores_path_lbl.grid(column =0, row =2 )
-    stores_path_entry.grid(column =0, row =3)
+    members_path_lbl.grid(column =0, row = 4)
+    members_path_entry.grid(column = 1, row =4)
+    stores_path_lbl.grid(column =0, row =5 )
+    stores_path_entry.grid(column =1, row =5)
 
     submitpath_button = Button(frame, text="Submit", command = lambda: loadMembersAndStoreData(members_path_entry.get(), stores_path_entry.get(), frame))
-    submitpath_button.grid(column = 0, row = 4)
-
-    close_button = Button(frame, text="close", command=lambda: closeResultsFrame(frame))
-    close_button.grid(column=4, row=4)
+    submitpath_button.grid(column = 0, row = 8)
 
 def showDataImportForm():
-    dataImportFrame = initializeFrame()
+    dataImportFrame = initializeFrame("Please enter absolute paths for Member and Store csv files")
     importData(dataImportFrame)
 
 importData_button = Button(mainFrame, text="Import Data", command = showDataImportForm)
