@@ -6,7 +6,7 @@ window = Tk()
 mainFrame = Frame(window)
 mainFrame.grid(row=0, column=0, sticky="nsew")
 
-def initializeResultsFrame():
+def initializeFrame():
     resultFrame = Frame(window)
     resultFrame.grid(row=0, column=0, sticky="nsew")
     topButton = Button(resultFrame, text="CLOSE", command=lambda: closeResultsFrame(resultFrame))
@@ -121,6 +121,11 @@ def displayResultTable(rows,start_row,resultsFrame):
         col_counter = 0
         row_counter = row_counter + 1
 
+def createResultsFrame(header,rows):
+    resultsFrame = initializeFrame()
+    displayResultTable(header,4,resultsFrame)
+    displayResultTable(rows,5,resultsFrame)
+
 def executeQuery1():
 
     conn = sqlite3.connect('members.db')
@@ -131,9 +136,7 @@ def executeQuery1():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    resultsFrame = initializeResultsFrame()
-    displayResultTable(headerRow,4,resultsFrame)
-    displayResultTable(rows,5,resultsFrame)
+    createResultsFrame(headerRow,rows)
     conn.close()
 
 def executeQuery2():
@@ -147,8 +150,7 @@ def executeQuery2():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    displayResultTable(headerRow,4)
-    displayResultTable(rows,5)
+    createResultsFrame(headerRow,rows)
     conn.close()
 
 def executeQuery3():
@@ -162,8 +164,7 @@ def executeQuery3():
     headerRow = [['Member#','LastName','FirstName','StreetAddress','City','State','ZipCode','Phone','FavoriteStore','DateJoined','DuesPaid']]
     c.execute(query1)
     rows = c.fetchall()
-    displayResultTable(headerRow,4)
-    displayResultTable(rows,5)
+    createResultsFrame(headerRow,rows)
     conn.close()
 
 
@@ -179,8 +180,7 @@ def executeQuery4():
     headerRow = [['LastName','FirstName','StoreName','Location']]
     c.execute(query1)
     rows = c.fetchall()
-    displayResultTable(headerRow,4)
-    displayResultTable(rows,5)
+    createResultsFrame(headerRow,rows)
     conn.close()
 
 
@@ -198,10 +198,8 @@ def executeQuery5():
     headerRow = [['LastName','FirstName']]
     c.execute(query1)
     rows = c.fetchall()
-    displayResultTable(headerRow,4)
-    displayResultTable(rows,5)
+    createResultsFrame(headerRow,rows)
     conn.close()
-
 
 def importData(frame):
     frame.tkraise(mainFrame)
@@ -222,7 +220,7 @@ def importData(frame):
     close_button.grid(column=4, row=4)
 
 def showDataImportForm():
-    dataImportFrame = initializeResultsFrame()
+    dataImportFrame = initializeFrame()
     importData(dataImportFrame)
 
 importData_button = Button(mainFrame, text="Import Data", command = showDataImportForm)
