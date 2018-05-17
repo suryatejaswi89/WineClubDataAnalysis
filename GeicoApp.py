@@ -32,7 +32,7 @@ def loadMembersAndStoreData(members_path, store_path, frame):
     header1 = f1.next()
     header2 = f2.next()
 
-    # print(header)
+
 
     # Create store_table
     c.execute(
@@ -115,11 +115,9 @@ def displayResultTable(rows,start_row,resultsFrame):
         for col in row:
             curr_ele =Label(resultsFrame, text=col)
             curr_ele.grid(column=col_counter, row=row_counter)
- #           curr_ele.pack()
             col_counter = col_counter + 1
             col_divider = Label(resultsFrame, text="|")
             col_divider.grid(column=col_counter, row=row_counter)
-  #          col_divider.pack()
             col_counter = col_counter + 1
         col_counter = 0
         row_counter = row_counter + 1
